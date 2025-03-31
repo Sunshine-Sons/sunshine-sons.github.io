@@ -590,7 +590,8 @@ export class PageController {
 		filters.dropShadow.offsetY = 20 * scale
 		filters.glow.outerStrength = 10 * scale
 		filters.bloom.blur = 16 * scale
-		filters.godray.center.x = screenWidth
+		filters.godray.center.x = screenWidth + 10
+		filters.godray.center.y = -10
 		
 		this.#loading.position.set(centerX, centerY)
 		this.#loading.scale.set(scale)
