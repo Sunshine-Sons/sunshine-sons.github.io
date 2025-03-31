@@ -2,8 +2,8 @@
 
 'use strict'
 
-import {PageController} from './pageController.mjs'
-import {HomePage} from './home.mjs'
+import {PageController} from './pageController.js'
+import {HomePage} from './home.js'
 
 function getPageKeyFromSearchParams() {
 	const params = new URL(document.location.toString()).searchParams

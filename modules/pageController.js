@@ -2,9 +2,9 @@
 
 'use strict'
 
-import {assignIf, checkMobile, DynamicColor, onKeyDown, openInNewTab, phi, tau, toggleFullscreen} from './util.mjs'
-import {Application, Assets, Container, FillGradient, Graphics, RenderTexture, Sprite, SCALE_MODES, Text, Texture} from './pixi.min.mjs'
-import {AdvancedBloomFilter, AsciiFilter, BevelFilter, DropShadowFilter, GlowFilter, GodrayFilter, OutlineFilter} from './pixi-filters.mjs'
+import {assignIf, checkMobile, DynamicColor, onKeyDown, openInNewTab, phi, tau, toggleFullscreen} from './util.js'
+import {Application, Assets, Container, FillGradient, Graphics, RenderTexture, Sprite, SCALE_MODES, Text, Texture} from './pixi.min.js'
+import {AdvancedBloomFilter, AsciiFilter, BevelFilter, DropShadowFilter, GlowFilter, GodrayFilter, OutlineFilter} from './pixi-filters.js'
 
 export class PageController {
 	#pageClasses = null

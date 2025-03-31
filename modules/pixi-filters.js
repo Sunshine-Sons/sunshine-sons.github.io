@@ -6,7 +6,7 @@
  * http://www.opensource.org/licenses/mit-license
  * 
  * Copyright 2024, undefined, All Rights Reserved
- */import{Filter as s,GpuProgram as f,GlProgram as c,deprecation as h,TexturePool as y,Texture as _,Color as S,BlurFilter as Vt,DEG_TO_RAD as G,AlphaFilter as Xt,BlurFilterPass as nn,TextureSource as Yt,ImageSource as Kt,ObservablePoint as Wt,Point as qt}from'./pixi.min.mjs';var m=`in vec2 aPosition;
+ */import{Filter as s,GpuProgram as f,GlProgram as c,deprecation as h,TexturePool as y,Texture as _,Color as S,BlurFilter as Vt,DEG_TO_RAD as G,AlphaFilter as Xt,BlurFilterPass as nn,TextureSource as Yt,ImageSource as Kt,ObservablePoint as Wt,Point as qt}from'./pixi.min.js';var m=`in vec2 aPosition;
 out vec2 vTextureCoord;
 
 uniform vec4 uInputSize;

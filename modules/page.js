@@ -2,9 +2,9 @@
 
 'use strict'
 
-import {assignIf, phi, phi2} from './util.mjs'
-import {Container} from './pixi.min.mjs'
-import {PageController} from './pageController.mjs'
+import {assignIf, phi, phi2} from './util.js'
+import {Container} from './pixi.min.js'
+import {PageController} from './pageController.js'
 
 export class Page {
 	#frameData = {

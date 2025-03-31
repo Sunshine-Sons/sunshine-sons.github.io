@@ -2,7 +2,7 @@
 
 'use strict'
 
-import {Page} from './page.mjs'
+import {Page} from './page.js'
 
 export class HomePage extends Page {
 	settings = {
