@@ -22,7 +22,7 @@ export class HomePage extends Page {
 	}
 	
 	layout(screenWidth, screenHeight, centerX, centerY, isHorizontalDisplay) {
-		this.title1.scale.set(0.85)
+		this.title1.scale.set(isHorizontalDisplay ? 0.7 : 1)
 		this.slogan1.scale.set(isHorizontalDisplay ? 0.85 : 1)
 		this.tmSlogan.position.set(this.slogan1.x + this.slogan1.width / 2 + 80, this.slogan1.y - this.slogan1.height * 0.4)
 	}

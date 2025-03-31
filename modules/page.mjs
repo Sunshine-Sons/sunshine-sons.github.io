@@ -181,7 +181,7 @@ export class Page {
 	layoutBase(screenWidth, screenHeight, centerX, centerY, isHorizontalDisplay) {
 		const titleF = phi + 0.05
 		
-		this.position(this.title1, 0, -phi)
+		this.position(this.title1, 0, isHorizontalDisplay ? -phi : -0.7)
 		
 		if (this.tmTitle) {
 			this.tmTitle.position.set(this.title1.x + this.title1.width / 2 + 80, this.title1.y - this.title1.height * 0.4)
@@ -217,6 +217,8 @@ export class Page {
 				frame.scale.set(isHorizontalDisplay ? 1 : 1.5)
 			}
 		})
+		
+		this.frameContainer.position.set(0, isHorizontalDisplay ? centerY * 0.07 : 0)
 		
 		if (this.frameContainer.children.length <= 1) {
 			this.rightArrow.visible = false
