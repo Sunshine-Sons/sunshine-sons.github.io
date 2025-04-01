@@ -4,7 +4,7 @@
 
 import {assignIf, checkMobile, DynamicColor, onKeyDown, openInNewTab, phi, tau, toggleFullscreen} from './util.js'
 import {Application, Assets, Container, FillGradient, Graphics, RenderTexture, Sprite, SCALE_MODES, Text, Texture} from './pixi.min.js'
-import {AdvancedBloomFilter, AsciiFilter, BevelFilter, DropShadowFilter, GlowFilter, GodrayFilter, OutlineFilter} from './pixi-filters.js'
+import {AdvancedBloomFilter, AsciiFilter, BevelFilter, DropShadowFilter, GlowFilter, OutlineFilter} from './pixi-filters.js'
 
 export class PageController {
 	#pageClasses = null
@@ -187,11 +187,9 @@ export class PageController {
 		this.addFilter('asciiSmall', new AsciiFilter({size: 4, replaceColor: true}))
 		this.addFilter('bloom', new AdvancedBloomFilter({threshold: 0.1}))
 		this.addFilter('glow', new GlowFilter())
-		this.addFilter('godray', new GodrayFilter({parallel: false}))
 		this.addFilter('dropShadow', new DropShadowFilter())
 		this.addFilter('outline', new OutlineFilter({color: 0x000000, thickness: this.isMobile ? 3 : 6}))
 		
-		//this.setFilters(this.#backgroundRectangle, 'godray')
 		this.setFilters(this.#ground, 'outline')
 		this.setFilters(this.#expand, 'glow')
 		this.setFilters(this.#unexpand, 'glow')
@@ -629,8 +627,6 @@ export class PageController {
 		filters.dropShadow.offsetY = 20 * scale
 		filters.glow.outerStrength = 10 * scale
 		filters.bloom.blur = 16 * scale
-		filters.godray.center.x = screenWidth + 10
-		filters.godray.center.y = -10
 		this.#sun.position.set(screenWidth + 10, -10)
 		
 		this.#loading.position.set(centerX, centerY)
@@ -664,7 +660,6 @@ export class PageController {
 		this.sloganAccel *= 0.99 - 0.001 * dt
 		
 		filters.glow.color = dynamicColors[1].getInt()
-		filters.godray.time += 0.01 * dt
 		
 		const sunDim = Math.sqrt(this.screenWidth * this.screenWidth + this.screenHeight * this.screenHeight) * 6
 		this.#sun.rotation = this.#totalTime * 0.001 % tau
