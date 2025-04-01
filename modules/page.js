@@ -105,8 +105,10 @@ export class Page {
 		})
 		
 		const controller = this.#controller
+		const titleShadowName = settings.title + 'Shadow'
+		const sloganShadowName = settings.slogan + 'Shadow'
 		
-		await controller.loadTextures(settings.title, settings.slogan)
+		await controller.loadTextures(settings.title, titleShadowName, settings.slogan, sloganShadowName)
 		await controller.loadTextures(...settings.textures)
 		
 		for (const element of settings.ui) { 
@@ -120,18 +122,15 @@ export class Page {
 			this.#ui.push(sprite)
 		}
 		
+		this.titleShadow = this.newSprite(titleShadowName)
 		this.title1 = this.newSprite(settings.title)
 		
 		if (settings.tmTitle) {
 			this.tmTitle = this.newSprite('TM', null, 0.125)
 		}
 		
+		this.sloganShadow = this.newSprite(sloganShadowName)
 		this.slogan1 = this.newSprite(settings.slogan)
-		this.leftArrow = this.newSprite('arrow')
-		this.rightArrow = this.newSprite('arrow')
-		
-		this.controller.setUiVisibility(this.leftArrow)
-		this.controller.setUiVisibility(this.rightArrow)
 		
 		if (settings.tmSlogan) {
 			this.tmSlogan = this.newSprite('TM', null, 0.125)
@@ -139,10 +138,8 @@ export class Page {
 		
 		this.frameContainer = this.newContainer()
 		
-		this.setFilters(this.title1, 'glow', 'dropShadow')
-		this.setFilters(this.slogan1, 'glow', 'dropShadow')
-		this.setFilters(this.leftArrow, 'glow', 'dropShadow')
-		this.setFilters(this.rightArrow, 'glow', 'dropShadow')
+		this.setFilters(this.title1, 'glow')
+		this.setFilters(this.slogan1, 'glow')
 		
 		if (settings.story != null) {
 			await this.#createStory()
@@ -161,8 +158,6 @@ export class Page {
 		}
 		
 		this.onClick(this.slogan1, () => nextFrame(1))
-		this.onClick(this.leftArrow, () => nextFrame(-1))
-		this.onClick(this.rightArrow, () => nextFrame(1))
 		
 		this.init()
 		this.#resetFrames()
@@ -189,16 +184,6 @@ export class Page {
 		
 		this.position(this.slogan1, 0, phi, 0.75)
 		
-		if (isHorizontalDisplay) {
-			this.position(this.rightArrow, phi, 0, 0.5)
-			this.position(this.leftArrow, -phi, 0, 0.5)
-		} else {
-			this.position(this.rightArrow, phi2, 0,  0.75)
-			this.position(this.leftArrow, -phi2, 0, 0.75)
-		}
-		
-		this.leftArrow.scale.x *= -1
-		
 		if (this.tmSlogan) {
 			this.tmSlogan.position.set(this.slogan1.x + this.slogan1.width / 2 + 80, this.slogan1.y - this.slogan1.height * 0.4)
 		}
@@ -219,11 +204,6 @@ export class Page {
 		})
 		
 		this.frameContainer.position.set(0, isHorizontalDisplay ? centerY * 0.07 : 0)
-		
-		if (this.frameContainer.children.length <= 1) {
-			this.rightArrow.visible = false
-			this.leftArrow.visible = false
-		}
 		
 		this.layout(screenWidth, screenHeight, centerX, centerY, isHorizontalDisplay)
 	}

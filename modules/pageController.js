@@ -21,6 +21,7 @@ export class PageController {
 	#backgroundContainer = null
 	#backgroundGradient = null
 	#backgroundRectangle = null
+	#sun = null
 	#clouds = []
 	#ground = null
 	#leaves = []
@@ -28,10 +29,15 @@ export class PageController {
 	#controllerUiContainer = null
 	#pageContainer = null
 	#unexpand = null
+	#unexpandShadow = null
 	#expand = null
+	#expandShadow = null
 	#facebook = null
+	#facebookShadow = null
 	#youtube = null
+	#youtubeShadow = null
 	#phone = null
+	#phoneShadow = null
 	#mouseX = 0
 	#mouseY = 0
 	#scale = 1
@@ -126,8 +132,9 @@ export class PageController {
 		loading.scale.set(this.#scale)
 		app.ticker.add((time) => loading.rotation += time.deltaTime * 0.1)
 		
-		await this.loadTextures('expand', 'unexpand', 'facebook', 'phone', 'youtube', 'TM', 'arrow', 'ground',
-			'cloud1', 'leaf1', 'leaf2', 'leaf3', 'leaf4')
+		await this.loadTextures('expand', 'expandShadow', 'unexpand', 'unexpandShadow',
+			'facebook', 'phone', 'circleShadow', 'youtube', 'youtubeShadow',
+			'TM', 'sun', 'ground', 'cloud1', 'leaf1', 'leaf2', 'leaf3', 'leaf4', 'leafShadow')
 	}
 	
 	#createBaseGraphics() {
@@ -139,6 +146,7 @@ export class PageController {
 		this.#backgroundGradient.addColorStop(0, 0x80d7fa)
 		this.#backgroundGradient.addColorStop(1, 0x92e8fa)
 		this.#backgroundRectangle = this.newGraphics(backgroundContainer)
+		this.#sun = this.newSprite('sun', backgroundContainer)
 		
 		for (let i = 0; i < 8; ++i) {
 			this.#clouds.push(this.newSprite('cloud1', backgroundContainer))
@@ -147,17 +155,27 @@ export class PageController {
 		this.#ground = this.newSprite('ground', backgroundContainer)
 		
 		for (let i = 0; i < 8; ++i) {
-			this.#leaves.push(this.newSprite('leaf' + ((i % 4) + 1), backgroundContainer))
+			const shadow = this.newSprite('leafShadow', backgroundContainer)
+			
+			this.#leaves.push({
+				leaf: this.newSprite('leaf' + ((i % 4) + 1), backgroundContainer),
+				shadow: shadow
+			})
 		}
 		
 		const controllerUiContainer = this.newContainer()
 		
 		this.#controllerUiContainer = controllerUiContainer
 		controllerUiContainer.visible = false
+		this.#expandShadow = this.newSprite('expandShadow', controllerUiContainer)
 		this.#expand = this.newSprite('expand', controllerUiContainer)
+		this.#unexpandShadow = this.newSprite('unexpandShadow', controllerUiContainer)
 		this.#unexpand = this.newSprite('unexpand', controllerUiContainer)
+		this.#facebookShadow = this.newSprite('circleShadow', controllerUiContainer)
 		this.#facebook = this.newSprite('facebook', controllerUiContainer)
+		this.#youtubeShadow = this.newSprite('youtubeShadow', controllerUiContainer)
 		this.#youtube = this.newSprite('youtube', controllerUiContainer)
+		this.#phoneShadow = this.newSprite('circleShadow', controllerUiContainer)
 		this.#phone = this.newSprite('phone', controllerUiContainer)
 		
 		this.#pageContainer = this.newContainer()
@@ -173,15 +191,13 @@ export class PageController {
 		this.addFilter('dropShadow', new DropShadowFilter())
 		this.addFilter('outline', new OutlineFilter({color: 0x000000, thickness: this.isMobile ? 3 : 6}))
 		
-		this.setFilters(this.#backgroundRectangle, 'godray')
-		this.#clouds.forEach((cloud) => this.setFilters(cloud, 'dropShadow'))
-		this.#leaves.forEach((leaf) => this.setFilters(leaf, 'dropShadow'))
+		//this.setFilters(this.#backgroundRectangle, 'godray')
 		this.setFilters(this.#ground, 'outline')
-		this.setFilters(this.#expand, 'glow', 'dropShadow')
-		this.setFilters(this.#unexpand, 'glow', 'dropShadow')
-		this.setFilters(this.#facebook, 'glow', 'dropShadow')
-		this.setFilters(this.#youtube, 'glow', 'dropShadow')
-		this.setFilters(this.#phone, 'glow', 'dropShadow')
+		this.setFilters(this.#expand, 'glow')
+		this.setFilters(this.#unexpand, 'glow')
+		this.setFilters(this.#facebook, 'glow')
+		this.setFilters(this.#youtube, 'glow')
+		this.setFilters(this.#phone, 'glow')
 		
 		this.#pushNewDynamicColor({
 			r: {velocity: 1},
@@ -523,7 +539,7 @@ export class PageController {
 			const numClouds = this.#clouds.length
 			
 			cloud.x = i * 2 * screenWidth / numClouds + Math.random() * 10
-			cloud.y = i * screenHeight / numClouds % (screenHeight / 5) + Math.random() * 10
+			cloud.y = i * screenHeight / numClouds % (screenHeight / 5) + Math.random() * 10 + 12
 			cloud.baseY = cloud.y
 			cloud.scale = Math.pow(screenWidth / 1920, 3 / 4)
 			cloud.velocity = 0.5 * (i / 4 + 1 + Math.random()) * cloud.scale.x
@@ -533,8 +549,11 @@ export class PageController {
 		this.#ground.width = screenWidth
 		this.#ground.height = screenHeight * 0.25
 		
-		this.#leaves.forEach((leaf, i) => {
+		this.#leaves.forEach((leafData, i) => {
 			const v = 1
+			const leaf = leafData.leaf
+			
+			// TODO: All the non-pixi fields which are added to leaf should be fields of leafData instead
 			
 			leaf.rv = 0
 			leaf.elapsed = Math.random() * 15
@@ -567,6 +586,14 @@ export class PageController {
 			})
 		}
 		
+		const expandShadowOffset = 10
+		
+		this.#expandShadow.position.set(this.#expand.x + expandShadowOffset, this.#expand.y + expandShadowOffset)
+		this.#expandShadow.scale = this.#expand.scale
+		
+		this.#unexpandShadow.position.set(this.#unexpand.x + expandShadowOffset, this.#unexpand.y + expandShadowOffset)
+		this.#unexpandShadow.scale = this.#unexpand.scale
+		
 		this.arrangeUi({
 			align: 'center',
 			y: centerY / scale - (isHorizontalDisplay ? 100 : 150),
@@ -578,6 +605,18 @@ export class PageController {
 				[this.#phone, 145 / 268]
 			]
 		})
+		
+		const circleShadowOffset = 20
+		const youtubeShadowOffset = 20
+		
+		this.#facebookShadow.position.set(this.#facebook.x + circleShadowOffset, this.#facebook.y + circleShadowOffset)
+		this.#facebookShadow.scale = this.#facebook.scale
+		
+		this.#youtubeShadow.position.set(this.#youtube.x + youtubeShadowOffset, this.#youtube.y + youtubeShadowOffset)
+		this.#youtubeShadow.scale = this.#youtube.scale
+		
+		this.#phoneShadow.position.set(this.#phone.x + circleShadowOffset, this.#phone.y + circleShadowOffset)
+		this.#phoneShadow.scale = this.#phone.scale
 		
 		const pageContainer = this.#pageContainer
 		
@@ -592,6 +631,7 @@ export class PageController {
 		filters.bloom.blur = 16 * scale
 		filters.godray.center.x = screenWidth + 10
 		filters.godray.center.y = -10
+		this.#sun.position.set(screenWidth + 10, -10)
 		
 		this.#loading.position.set(centerX, centerY)
 		this.#loading.scale.set(scale)
@@ -611,8 +651,8 @@ export class PageController {
 		const isFullscreen = document.fullscreen
 		
 		this.#totalTime += dt
-		this.#expand.visible = !isFullscreen
-		this.#unexpand.visible = isFullscreen
+		this.#expandShadow.visible = this.#expand.visible = !isFullscreen
+		this.#unexpandShadow.visible = this.#unexpand.visible = isFullscreen
 		
 		dynamicColors[0].update(dt / 100 * (1 + this.titleAccel))
 		dynamicColors[1].update(dt / 100 * (1 + this.glowAccel))
@@ -626,6 +666,11 @@ export class PageController {
 		filters.glow.color = dynamicColors[1].getInt()
 		filters.godray.time += 0.01 * dt
 		
+		const sunDim = Math.sqrt(this.screenWidth * this.screenWidth + this.screenHeight * this.screenHeight) * 6
+		this.#sun.rotation = this.#totalTime * 0.001 % tau
+		this.#sun.width = sunDim
+		this.#sun.height = sunDim
+		
 		this.#clouds.forEach((cloud, i) => {
 			cloud.x -= cloud.velocity * dt
 			cloud.y = cloud.baseY + Math.sin(i + this.#totalTime / 100) * this.screenHeight / 20 * cloud.scale.y
@@ -635,7 +680,10 @@ export class PageController {
 			}
 		})
 		
-		this.#leaves.forEach((leaf, i) => {
+		this.#leaves.forEach((leafData, i) => {
+			const leaf = leafData.leaf
+			const shadow = leafData.shadow
+			
 			leaf.elapsed += dt / 100
 			leaf.x += leaf.vx * (Math.sin(leaf.elapsed) / 8 + 7 / 8)
 			
@@ -647,6 +695,12 @@ export class PageController {
 			
 			leaf.rv = Math.sin(leaf.elapsed) / 40
 			leaf.rotation = (leaf.rotation + leaf.rv) % tau
+			
+			const offset = leaf.scale.x * 20
+			
+			shadow.position.set(leaf.x + offset, leaf.y + offset)
+			shadow.rotation = leaf.rotation
+			shadow.scale = leaf.scale
 		})
 		
 		this.#updatePageFade(dt)
